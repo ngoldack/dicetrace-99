@@ -20,7 +20,7 @@
 				<span
 					class="bg-gradient-to-br from-red-500 to-yellow-500 bg-clip-text text-transparent box-decoration-clone"
 				>
-					Play. Track. Analyze.
+					Plan. Play. Track.
 				</span>
 			</h2>
 		</div>
@@ -32,7 +32,7 @@
 						'auth0',
 						{
 							redirect: false,
-							callbackUrl: 'http://localhost:5173/app'
+							callbackUrl: '/app'
 						},
 						{
 							scope: 'api openid profile email'
