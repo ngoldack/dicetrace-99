@@ -8,7 +8,9 @@ const config = {
 		inspector: true
 	},
 	kit: {
-		adapter: adapter()
+		adapter: adapter({
+			runtime: 'edge'
+		})
 	}
 };
 export default config;
