@@ -21,6 +21,7 @@ const authorization: Handle = async ({ event, resolve }) => {
 
 export const handle: Handle = sequence(
 	SvelteKitAuth({
+		trustHost: true,
 		providers: [
 			Auth0({
 				issuer: env.AUTH0_ISSUER,
