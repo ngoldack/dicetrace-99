@@ -6,6 +6,9 @@
       "dependsOn": ["^build"],
       "outputs": [".svelte-kit/**", ".vercel/**"]
     },
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "lint": {},
     "dev": {
       "cache": false,
