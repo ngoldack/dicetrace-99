@@ -1,9 +1,6 @@
-import type { RequestContext } from '@vercel/edge';
+import { VercelRequest, VercelResponse } from '@vercel/node';
 
-export const config = {
-	runtime: 'edge'
-};
-
-export default function MyEdgeFunction(request: Request, context: RequestContext) {
-	return new Response(`Hello, from ${request.url} I'm an Edge Function!`);
+export default function handler(request: VercelRequest, response: VercelResponse) {
+	const { name = 'World' } = request.query;
+	return response.send(`Hello ${name}!`);
 }
