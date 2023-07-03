@@ -43,7 +43,6 @@ importers:
       svelte-check: ^3.4.4
       tailwindcss: ^3.3.2
       tslib: ^2.6.0
-      types: workspace:*
       typescript: ^5.1.6
       unplugin-icons: ^0.16.3
       vite: ^4.3.9
@@ -74,7 +73,6 @@ importers:
       svelte-check: 3.4.4_mxvrslrb5jnlwsbivuqrszua6u
       tailwindcss: 3.3.2
       tslib: 2.6.0
-      types: link:../../packages/types
       typescript: 5.1.6
       unplugin-icons: 0.16.3
       vite: 4.3.9
