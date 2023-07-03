@@ -32,8 +32,10 @@
 	export let data;
 </script>
 
-<AppShell>
-	<svelte:fragment slot="header">
+<nav>
+
+	<AppShell>
+		<svelte:fragment slot="header">
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<h1 class="h1">
@@ -107,6 +109,7 @@
 	</svelte:fragment>
 	<slot />
 </AppShell>
+</nav>
 
 <div class="card p-4 w-72 shadow-xl" data-popup="popupAccount">
 	<ul>
