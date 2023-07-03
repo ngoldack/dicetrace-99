@@ -1,0 +1,14 @@
+{
+  "name": "types",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "vitest": "^0.32.3",
+    "typescript": "^5.1.6",
+    "zod": "^3.21.4"
+  }
+}
