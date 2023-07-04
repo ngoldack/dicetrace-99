@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     # To use Remote Caching, uncomment the next lines and follow the steps below.
     env:
+      CI: true
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
@@ -43,6 +44,12 @@ jobs:
 
       - name: Test
         run: pnpm test:ci
+        env:
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+          AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+          AUTH0_ISSUER: ${{ secrets.AUTH0_ISSUER }}
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/node_modules/playwright/.local-browsers
 
       - name: Upload coverage reports to Codecov
         if: always()
