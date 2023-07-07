@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "apps/userdata",
+    "packages/id-gen",
+    "packages/rs-models"
+]

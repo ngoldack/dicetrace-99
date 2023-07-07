@@ -1,0 +1,8 @@
+{
+  "name": "id-gen",
+  "scripts": {
+    "build": "cargo build",
+    "test": "cargo test",
+    "lint": "cargo clippy"
+  }
+}
