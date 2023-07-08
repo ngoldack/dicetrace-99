@@ -1,0 +1,7 @@
+FROM thomvaill/log4brains AS builder
+COPY . .
+
+RUN log4brains build -o build/log4brains
+
+FROM nginx:alpine AS runner
+COPY --from=builder /build/log4brains /usr/share/nginx/html
