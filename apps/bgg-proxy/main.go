@@ -108,7 +108,7 @@ func main() {
 
 	store := persist.NewMemoryStore(60 * time.Second)
 
-	r.GET("/health", health)
+	r.GET("/health", cache.CacheByRequestPath(store, time.Second), health)
 	r.GET("/search", cache.CacheByRequestURI(store, time.Minute), search)
 	r.GET("/collection", cache.CacheByRequestURI(store, time.Minute), collection)
 	r.GET("/plays", cache.CacheByRequestURI(store, time.Minute), plays)
