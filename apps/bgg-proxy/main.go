@@ -17,6 +17,7 @@ import (
 
 func health(c *gin.Context) {
 	client := gobgg.NewBGGClient()
+	start := time.Now()
 	_, err := client.Hotness(c, 0)
 	if err != nil {
 		log.Fatal(err)
@@ -25,7 +26,12 @@ func health(c *gin.Context) {
 			problem.Custom("error", err.Error())).WriteTo(c.Writer)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	delay := time.Since(start).String()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"delay":  delay,
+	})
 
 }
 
