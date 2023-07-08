@@ -10,6 +10,7 @@ pub fn internal_error() -> HttpApiProblem {
 
 #[catch(400)]
 pub fn bad_request() -> HttpApiProblem {
+    
     HttpApiProblem::from(StatusCode::BAD_REQUEST)
         .title("Bad Request")
         .detail("The request was malformed")

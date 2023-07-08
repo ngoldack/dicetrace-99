@@ -24,5 +24,7 @@ WORKDIR /app
 # 3. Copy the binary from the builder image to the new image
 COPY --from=builder /app/target/release/userdata ./
 
+EXPOSE 8000
+
 # Run the binary
 CMD ["./userdata"]

@@ -2463,12 +2463,14 @@ dependencies = [
  "dotenv",
  "http-api-problem",
  "id-gen",
+ "log",
  "nanoid",
  "rocket",
  "rs-models",
  "serde",
  "serde_json",
  "sqlx",
+ "tracing-log",
 ]
 
 [[package]]

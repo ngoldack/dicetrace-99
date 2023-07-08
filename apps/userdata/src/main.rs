@@ -6,10 +6,16 @@ mod responses;
 mod user_handler;
 
 use error_handler::{bad_request, internal_error, not_found};
+use log;
+use tracing_log::LogTracer;
 
 #[launch]
 async fn rocket() -> _ {
-    dotenv::dotenv().ok();
+    LogTracer::init().expect("Failed to set logger");
+
+    log::info!("Starting server");
+
+    dotenv::dotenv().expect("Failed to load .env file");
     rocket::build()
         .manage::<sqlx::MySqlPool>(db::connect().await)
         .register("/", catchers![not_found, internal_error, bad_request])

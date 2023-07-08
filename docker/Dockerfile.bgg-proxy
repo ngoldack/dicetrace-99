@@ -40,5 +40,6 @@ COPY --from=builder /app/build/bgg-proxy /app/bgg-proxy
 
 ENV GIN_MODE=release
 
-# Run the web service on container startup.
+EXPOSE 8080
+
 CMD ["/app/bgg-proxy"]

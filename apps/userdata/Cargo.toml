@@ -15,3 +15,5 @@ sqlx = { version = "0.7", features = ["mysql", "macros", "migrate", "runtime-tok
 http-api-problem = { version = "0.57.0", features = [ "rocket-okapi" ]}
 id-gen = { path = "../../packages/id-gen" }
 rs-models = { path = "../../packages/rs-models" }
+tracing-log = "0.1.3"
+log = "0.4.19"

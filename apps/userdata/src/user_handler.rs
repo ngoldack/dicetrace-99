@@ -9,6 +9,8 @@ pub async fn get_user(
     pool: &rocket::State<sqlx::MySqlPool>,
     id: i32,
 ) -> Result<Json<SuccessResponse<User>>, HttpApiProblem> {
+    log::debug!("Getting user with id: {}", id);
+
     let result: Result<User, sqlx::Error> =
         sqlx::query_as!(User, "SELECT * FROM users WHERE id = ?", id)
             .fetch_one(pool.inner())
@@ -34,6 +36,8 @@ pub async fn create_user(
     pool: &rocket::State<sqlx::MySqlPool>,
     mut user: Json<User>,
 ) -> Result<Json<SuccessResponse<User>>, HttpApiProblem> {
+    log::debug!("Creating user: {:?}", user);
+
     user.id = Some(id_gen::gen());
 
     let result: Result<_, sqlx::Error> = sqlx::query!(
@@ -66,6 +70,8 @@ pub async fn create_user(
 pub async fn get_users(
     pool: &rocket::State<sqlx::MySqlPool>,
 ) -> Result<Json<SuccessResponse<Vec<User>>>, HttpApiProblem> {
+    log::debug!("Getting all users");
+
     let result: Result<Vec<User>, sqlx::Error> = sqlx::query_as!(User, "SELECT * FROM users")
         .fetch_all(pool.inner())
         .await;
