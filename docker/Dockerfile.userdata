@@ -1,0 +1,26 @@
+# 1. This tells docker to use the Rust official image
+FROM rust:1.70.0-slim-bullseye AS builder
+
+ARG name=userdata
+
+WORKDIR /app
+
+# 2. Copy the files in your machine to the Docker image
+COPY ./ ./
+
+# Build your program for release
+RUN cargo build --release --package $name
+
+FROM debian:bullseye-slim AS runner
+
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 3. Copy the binary from the builder image to the new image
+COPY --from=builder /app/target/release/$name ./
+
+# Run the binary
+CMD ["./userdata"]
