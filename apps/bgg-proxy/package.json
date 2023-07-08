@@ -1,0 +1,9 @@
+{
+  "name": "bgg-proxy",
+  "scripts": {
+    "dev": "air",
+    "build": "go build -o build/bgg-proxy .",
+    "test": "go test ./...",
+    "lint": "go vet"
+  }
+}
