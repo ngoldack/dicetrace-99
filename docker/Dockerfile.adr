@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN mkdir -p build/log4brains
-RUN log4brains build -o build/log4brains
+RUN log4brains build -o build/log4brains --basePath "/"
 
 FROM nginx:alpine AS runner
 EXPOSE 80
