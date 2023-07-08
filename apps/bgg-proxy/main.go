@@ -15,10 +15,18 @@ import (
 	"schneider.vip/problem"
 )
 
-func ping(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
+func health(c *gin.Context) {
+	client := gobgg.NewBGGClient()
+	_, err := client.Hotness(c, 0)
+	if err != nil {
+		log.Fatal(err)
+		problem.Of(http.StatusInternalServerError).Append(
+			problem.Title("Error while pinging bgg"),
+			problem.Custom("error", err.Error())).WriteTo(c.Writer)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+
 }
 
 func search(c *gin.Context) {
@@ -94,7 +102,7 @@ func main() {
 
 	store := persist.NewMemoryStore(60 * time.Second)
 
-	r.GET("/ping", ping)
+	r.GET("/health", health)
 	r.GET("/search", cache.CacheByRequestURI(store, time.Minute), search)
 	r.GET("/collection", cache.CacheByRequestURI(store, time.Minute), collection)
 	r.GET("/plays", cache.CacheByRequestURI(store, time.Minute), plays)
