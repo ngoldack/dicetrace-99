@@ -17,6 +17,15 @@ jobs:
       contents: read
       packages: write
 
+    strategy:
+      matrix:
+        include:
+          - dockerfile: ./docker/Dockerfile.userdata
+            image-suffix: userdata
+          - dockerfile: ./docker/Dockerfile.bgg-proxy
+            image-suffix: bgg-proxy
+          - dokcerfile: ./docker/Dockerfile.bgg-adr
+            image-suffix: adr
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -32,7 +41,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.image-suffix }}
           tags: |
             ${{ github.sha }}
             ${{ github.ref }}
@@ -41,6 +50,7 @@ jobs:
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: .
+          file:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
