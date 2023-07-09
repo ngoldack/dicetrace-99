@@ -20,11 +20,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: docker/Dockerfile.userdata
+          - dockerfile: ./docker/Dockerfile.userdata
             image-suffix: userdata
-          - dockerfile: docker/Dockerfile.bgg-proxy
+          - dockerfile: ./docker/Dockerfile.bgg-proxy
             image-suffix: bgg-proxy
-          - dokcerfile: docker/Dockerfile.bgg-adr
+          - dokcerfile: :7docker/Dockerfile.adr
             image-suffix: adr
     steps:
       - name: Checkout repository
