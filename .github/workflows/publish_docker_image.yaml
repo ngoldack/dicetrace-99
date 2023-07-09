@@ -24,7 +24,7 @@ jobs:
             image-suffix: userdata
           - dockerfile: ./docker/Dockerfile.bgg-proxy
             image-suffix: bgg-proxy
-          - dokcerfile: :7docker/Dockerfile.adr
+          - dokcerfile: ./docker/Dockerfile.adr
             image-suffix: adr
     steps:
       - name: Checkout repository
