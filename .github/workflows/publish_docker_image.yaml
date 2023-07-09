@@ -24,8 +24,7 @@ jobs:
         include:
           - dockerfile: ./docker/Dockerfile.userdata
             image-suffix: userdata
-            build-args: |
-              DATABASE_URL=${{ github.env.USERDATA_DATABASE_URL }}
+            build-args: DATABASE_URL=${{ github.env.USERDATA_DATABASE_URL }}
           - dockerfile: ./docker/Dockerfile.bgg-proxy
             image-suffix: bgg-proxy
           - dockerfile: ./docker/Dockerfile.adr
@@ -58,5 +57,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            ${{ matrix.build-args }}
+          build-args: ${{ matrix.build-args }}
