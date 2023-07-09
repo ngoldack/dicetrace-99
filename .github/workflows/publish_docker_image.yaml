@@ -9,6 +9,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  USERDATA_DATABASE_URL: ${{ secrets.USERDATA_DATABASE_URL }}
 
 jobs:
   build-and-push-image:
@@ -23,6 +24,9 @@ jobs:
         include:
           - dockerfile: ./docker/Dockerfile.userdata
             image-suffix: userdata
+            envs:
+              - name: DATABASE_URL
+                value: ${{ github.env.USERDATA_DATABASE_URL }}
           - dockerfile: ./docker/Dockerfile.bgg-proxy
             image-suffix: bgg-proxy
           - dockerfile: ./docker/Dockerfile.adr
@@ -55,3 +59,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            ${{ matrix.envs }}
