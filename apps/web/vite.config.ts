@@ -1,14 +1,13 @@
-import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
 import Icons from 'unplugin-icons/vite';
 
 export default defineConfig({
 	plugins: [
-		sentrySvelteKit(),
 		sveltekit(),
 		Icons({
-			compiler: 'svelte'
+			compiler: 'svelte',
+			autoInstall: true
 		})
 	],
 	test: {

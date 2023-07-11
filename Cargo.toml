@@ -2,6 +2,7 @@
 
 members = [
     "apps/userdata",
-    "packages/id-gen",
-    "packages/rs-models"
+    "packages/rs-id-gen",
+    "packages/rs-models",
+    "packages/rs-rocket-cors"
 ]

@@ -1,5 +1,5 @@
 {
-  "name": "rs-models",
+  "name": "rs-id-gen",
   "scripts": {
     "build": "cargo build",
     "test": "cargo test",

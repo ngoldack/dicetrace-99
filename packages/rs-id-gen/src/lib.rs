@@ -16,7 +16,7 @@ const ALPHABET: [char; 36] = [
 /// println!("{}", id);
 /// ```
 pub fn gen() -> String {
-    return nanoid::nanoid!(12, &ALPHABET);
+    nanoid::nanoid!(12, &ALPHABET)
 }
 
 #[cfg(test)]

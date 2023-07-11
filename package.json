@@ -14,7 +14,6 @@
     "prettier": "^2.8.8",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.15.0",
   "name": "dicetrace",
   "pnpm": {
     "overrides": {

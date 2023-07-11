@@ -6,18 +6,20 @@ mod responses;
 mod user_handler;
 
 use error_handler::{bad_request, internal_error, not_found};
-use log;
-use tracing_log::LogTracer;
 
 #[launch]
 async fn rocket() -> _ {
-    LogTracer::init().expect("Failed to set logger");
+    dotenv::dotenv().expect("Failed to load .env file");
 
     log::info!("Starting server");
 
-    dotenv::dotenv().expect("Failed to load .env file");
+    let pool = db::connect().await;
+
+    println!("cargo:rerun-if-changed=migrations");
+
     rocket::build()
-        .manage::<sqlx::MySqlPool>(db::connect().await)
+        .manage::<sqlx::MySqlPool>(pool)
+        .attach(rs_rocket_cors::cors::CORS)
         .register("/", catchers![not_found, internal_error, bad_request])
         .mount(
             "/api/v1/user",
@@ -27,4 +29,5 @@ async fn rocket() -> _ {
                 user_handler::create_user
             ],
         )
+        .mount("/", routes![rs_rocket_cors::cors::all_options])
 }

@@ -774,13 +774,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "id-gen"
-version = "0.1.0"
-dependencies = [
- "nanoid",
-]
-
-[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1542,12 +1535,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "rs-id-gen"
+version = "0.1.0"
+dependencies = [
+ "nanoid",
+]
+
+[[package]]
 name = "rs-models"
 version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
  "sqlx",
+]
+
+[[package]]
+name = "rs-rocket-cors"
+version = "0.1.0"
+dependencies = [
+ "rocket",
 ]
 
 [[package]]
@@ -2462,11 +2469,12 @@ version = "0.1.0"
 dependencies = [
  "dotenv",
  "http-api-problem",
- "id-gen",
  "log",
  "nanoid",
  "rocket",
+ "rs-id-gen",
  "rs-models",
+ "rs-rocket-cors",
  "serde",
  "serde_json",
  "sqlx",

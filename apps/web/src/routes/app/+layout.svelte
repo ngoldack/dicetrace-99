@@ -4,7 +4,6 @@
 		AppBar,
 		AppRail,
 		AppRailAnchor,
-		AppRailTile,
 		Avatar,
 		type PopupSettings,
 		popup
@@ -22,6 +21,8 @@
 	import SearchIcon from '~icons/mdi/magnify';
 
 	import { signOut } from '@auth/sveltekit/client';
+	import { Toaster } from 'svelte-sonner';
+	import { enhance } from '$app/forms';
 
 	const popupAccount: PopupSettings = {
 		// Represents the type of event that opens/closed the popup
@@ -50,30 +51,37 @@
 				</svelte:fragment>
 
 				<div class="w-[50%]">
-					<div class="input-group input-group-divider grid-cols-[auto_1fr_auto] outline-none w-max">
-						<input type="search" class="outline-none p-2 w-full" placeholder="Search..." />
-						<button class="variant-filled-secondary w-full">
-							<SearchIcon />
-						</button>
-					</div>
+					<form method="post" action="/app/search?/search" use:enhance>
+						<div
+							class="input-group input-group-divider grid-cols-[auto_1fr_auto] outline-none w-max"
+						>
+							<input
+								name="query"
+								id="query"
+								type="search"
+								class="outline-none p-2 w-full"
+								placeholder="Search..."
+							/>
+							<button class="variant-filled-secondary w-full" type="submit">
+								<SearchIcon />
+							</button>
+						</div>
+					</form>
 				</div>
 
 				<svelte:fragment slot="trail">
-					<div
-						class="flex flex-row gap-4 items-center justify-center h-fit"
+					<button
+						class="flex flex-row gap-4 items-center justify-center h-fit btn btn-sm"
 						use:popup={popupAccount}
 					>
 						<Avatar
-							initials={data.session?.user?.name
-								?.split(' ')
-								.map((n) => n[0])
-								.join('')}
+							initials={data.userdata.name[0]}
 							url={data.session?.user?.image}
 							background="bg-primary-500"
 							rounded="rounded"
 							width="w-12"
 						/>
-					</div>
+					</button>
 				</svelte:fragment>
 			</AppBar>
 		</svelte:fragment>
@@ -118,6 +126,13 @@
 					</AppRailAnchor>
 				</svelte:fragment>
 				<!-- --- -->
+				<AppRailAnchor href="/app/search" selected={$page.url.pathname === '/app/search'}>
+					<svelte:fragment slot="lead">
+						<SearchIcon class="text-xl" />
+					</svelte:fragment>
+					<span>Search</span>
+				</AppRailAnchor>
+
 				<AppRailAnchor href="/app/collection" selected={$page.url.pathname === '/app/collection'}>
 					<svelte:fragment slot="lead">
 						<CollectionIcon class="text-xl" />
@@ -148,7 +163,7 @@
 
 <div class="card p-4 w-72 shadow-xl" data-popup="popupAccount">
 	<ul>
-		<li>{data.session?.user?.name}</li>
+		<li>{data.userdata.name}</li>
 		<li>
 			<button
 				class="btn variant-outline-primary"
@@ -163,3 +178,5 @@
 		</li>
 	</ul>
 </div>
+
+<Toaster richColors />

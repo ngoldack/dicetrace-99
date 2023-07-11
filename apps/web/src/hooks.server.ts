@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/sveltekit';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Auth0 from '@auth/core/providers/auth0';
 
@@ -7,26 +6,42 @@ import { env } from '$env/dynamic/private';
 import type { Provider } from '@auth/core/providers';
 import { sequence } from '@sveltejs/kit/hooks';
 
-Sentry.init({
-	dsn: 'https://098e1022501148f4a3e5466b7b8ea4f6@o4505465647267840.ingest.sentry.io/4505465648578560',
-	tracesSampleRate: 1
-});
-
 const authorization: Handle = async ({ event, resolve }) => {
-	// Protect any routes under /authenticated
-	if (event.url.pathname.startsWith('/app')) {
-		const session = await event.locals.getSession();
-		if (!session) {
-			throw redirect(303, '/auth/signin');
-		}
+	// If the path is not /app or /setup, we don't need to check for authorization
+	if (!event.url.pathname.startsWith('/app') && event.url.pathname !== '/setup') {
+		return resolve(event);
 	}
 
-	// If the request is still here, just proceed as normally
+	// Otherwise, we need to check if the user is logged in
+	const session = await event.locals.getSession();
+	// If the user is not logged in, redirect them to the login page
+	if (!session) {
+		throw redirect(303, '/auth/signin');
+	}
+
+	// User is already logged in, granting access to setup page
+	if (session && event.url.pathname === '/setup') {
+		return resolve(event);
+	}
+
+	// Check if the user has userdata
+	try {
+		const resp = await fetch(`${env.USERDATA_URL}?email=${session?.user?.email}`);
+		const body = await resp.json();
+
+		// If the user is logged in but doesn't have userdata, redirect them to the setup page
+		if (body.size === 0) {
+			throw redirect(303, '/setup');
+		}
+	} catch (err) {
+		console.log(err);
+		throw redirect(303, '/setup');
+	}
+
 	return resolve(event);
 };
 
 export const handle: Handle = sequence(
-	Sentry.sentryHandle(),
 	sequence(
 		SvelteKitAuth({
 			trustHost: true,
@@ -43,4 +58,11 @@ export const handle: Handle = sequence(
 		authorization
 	)
 );
-export const handleError = Sentry.handleErrorWithSentry();
+
+export const handleError = (error: Error) => {
+	return {
+		code: 500,
+		message: error.message ?? error.cause?.message ?? 'Unknown error',
+		id: crypto.randomUUID()
+	} satisfies App.Error;
+};

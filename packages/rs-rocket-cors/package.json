@@ -1,8 +1,8 @@
 {
-  "name": "id-gen",
+  "name": "rs-rocket-cors",
   "scripts": {
     "build": "cargo build",
     "test": "cargo test",
-    "lint": "cargo clippy"
+    "lint": "cargo clippy -W clippy::pedantic"
   }
 }

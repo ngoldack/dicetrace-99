@@ -16,15 +16,15 @@
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.4.4",
-		"@iconify/json": "^2.2.87",
+		"@iconify-json/mdi": "^1.1.52",
 		"@playwright/test": "^1.35.1",
 		"@skeletonlabs/skeleton": "^1.9.0",
 		"@sveltejs/adapter-vercel": "^3.0.1",
 		"@sveltejs/kit": "^1.22.1",
 		"@tailwindcss/forms": "^0.5.3",
 		"@tailwindcss/typography": "^0.5.9",
-		"@typescript-eslint/eslint-plugin": "^5.61.0",
-		"@typescript-eslint/parser": "^5.61.0",
+		"@typescript-eslint/eslint-plugin": "^5.62.0",
+		"@typescript-eslint/parser": "^5.62.0",
 		"autoprefixer": "^10.4.14",
 		"dotenv": "^16.3.1",
 		"eslint": "^8.44.0",
@@ -33,20 +33,20 @@
 		"postcss": "^8.4.25",
 		"prettier": "^2.8.8",
 		"prettier-plugin-svelte": "^2.10.1",
-		"svelte": "^3.59.2",
+		"svelte": "^4.0.5",
 		"svelte-check": "^3.4.5",
 		"tailwindcss": "^3.3.2",
 		"tslib": "^2.6.0",
 		"typescript": "^5.1.6",
 		"unplugin-icons": "^0.16.3",
 		"vite": "^4.4.2",
-		"vitest": "^0.25.8"
+		"vitest": "^0.33.0"
 	},
 	"type": "module",
 	"dependencies": {
 		"@auth/core": "^0.9.0",
-		"@auth/sveltekit": "^0.3.3",
-		"@sentry/sveltekit": "^7.57.0",
-		"@vercel/analytics": "^1.0.1"
+		"@auth/sveltekit": "^0.3.5",
+		"@vercel/analytics": "^1.0.1",
+		"svelte-sonner": "^0.0.13"
 	}
 }

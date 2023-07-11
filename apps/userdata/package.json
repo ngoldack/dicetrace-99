@@ -4,10 +4,11 @@
     "dev": "cargo watch -x run",
     "build": "cargo build",
     "build:release": "cargo build --release",
-    "lint": "cargo clippy -- -D warnings"
+    "lint": "cargo clippy -W clippy::pedantic"
   },
   "dependencies": {
-    "id-gen": "workspace:*",
-    "rs-models": "workspace:*"
+    "rs-id-gen": "workspace:*",
+    "rs-models": "workspace:*",
+    "rs-rocket-cors": "workspace:*"
   }
 }

@@ -3,22 +3,45 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
-	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/fzerorubigd/gobgg"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
+	"github.com/joho/godotenv"
+
+	ginCache "github.com/chenyahui/gin-cache"
 
 	"schneider.vip/problem"
+
+	"go.uber.org/ratelimit"
 )
 
+type syncedClient struct {
+	mu  sync.Mutex
+	bgg *gobgg.BGG
+}
+
+var rl = ratelimit.New(10, ratelimit.Per(60*time.Second)) // creates a 10 per minutes rate limiter.
+
+var httpClient = http.DefaultClient
+
+var client = &syncedClient{
+	mu:  sync.Mutex{},
+	bgg: gobgg.NewBGGClient(gobgg.SetLimiter(rl), gobgg.SetClient(httpClient)),
+}
+
 func health(c *gin.Context) {
-	client := gobgg.NewBGGClient()
+	client.mu.Lock()
+	defer client.mu.Unlock()
+
 	start := time.Now()
-	_, err := client.Hotness(c, 0)
+	_, err := client.bgg.Hotness(c, 0)
 	if err != nil {
 		log.Fatal(err)
 		problem.Of(http.StatusInternalServerError).Append(
@@ -36,14 +59,16 @@ func health(c *gin.Context) {
 }
 
 func search(c *gin.Context) {
+	client.mu.Lock()
+	defer client.mu.Unlock()
+
 	q := c.Query("q")
 	if q == "" {
 		problem.Of(http.StatusBadRequest).Append(problem.Title("Missing query")).WriteTo(c.Writer)
 		return
 	}
 
-	client := gobgg.NewBGGClient()
-	results, err := client.Search(c, q, gobgg.SearchTypes(gobgg.BoardGameType))
+	results, err := client.bgg.Search(c, q, gobgg.SearchTypes(gobgg.BoardGameType))
 	if err != nil {
 		problem.Of(http.StatusInternalServerError).Append(problem.Title("Error while searching")).WriteTo(c.Writer)
 		return
@@ -55,14 +80,11 @@ func search(c *gin.Context) {
 }
 
 func collection(c *gin.Context) {
-	client := gobgg.NewBGGClient()
-	if err := client.Login(c, "ngoldack", "Nicooo1999"); err != nil {
-		log.Fatal(err)
-		problem.Of(http.StatusInternalServerError).Append(problem.Title("Error while logging in")).WriteTo(c.Writer)
-		return
-	}
 
-	collection, err := client.GetCollection(c, client.GetActiveUsername())
+	client.mu.Lock()
+	defer client.mu.Unlock()
+
+	collection, err := client.bgg.GetCollection(c, client.bgg.GetActiveUsername())
 	if err != nil {
 		log.Fatal(err)
 		problem.Of(http.StatusInternalServerError).Append(problem.Title("Error while getting collection")).WriteTo(c.Writer)
@@ -89,10 +111,10 @@ func plays(c *gin.Context) {
 		}
 	}
 
-	log.Println(len(options))
+	client.mu.Lock()
+	defer client.mu.Unlock()
 
-	client := gobgg.NewBGGClient()
-	plays, err := client.Plays(c, options...)
+	plays, err := client.bgg.Plays(c, options...)
 	if err != nil {
 		log.Fatal(err)
 		problem.Of(http.StatusInternalServerError).Append(problem.Title("Error while getting plays")).WriteTo(c.Writer)
@@ -102,16 +124,64 @@ func plays(c *gin.Context) {
 	c.JSON(http.StatusOK, plays)
 }
 
+func item(c *gin.Context) {
+	idString := c.Param("id")
+	if idString == "" {
+		problem.Of(http.StatusBadRequest).Append(problem.Title("Missing id")).WriteTo(c.Writer)
+		return
+	}
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		problem.Of(http.StatusBadRequest).Append(problem.Title("Invalid id")).WriteTo(c.Writer)
+		return
+	}
+
+	client.mu.Lock()
+	defer client.mu.Unlock()
+
+	item, err := client.bgg.GetThings(c, gobgg.GetThingIDs(int64(id)))
+	if err != nil {
+		log.Fatal(err)
+		problem.Of(http.StatusInternalServerError).Append(problem.Title("Error while getting item")).WriteTo(c.Writer)
+		return
+	}
+
+	if len(item) == 0 {
+		problem.Of(http.StatusBadRequest).Append(problem.Title("Item not found")).WriteTo(c.Writer)
+		return
+	}
+
+	c.JSON(http.StatusOK, item[0])
+}
+
 func main() {
 	log.Println("Starting server...")
+
+	// load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	r := gin.Default()
 
-	store := persist.NewMemoryStore(60 * time.Second)
+	// setup redis
+	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
+	client := redis.NewClient(opt)
 
-	r.GET("/health", cache.CacheByRequestPath(store, time.Second), health)
-	r.GET("/search", cache.CacheByRequestURI(store, time.Minute), search)
-	r.GET("/collection", cache.CacheByRequestURI(store, time.Minute), collection)
-	r.GET("/plays", cache.CacheByRequestURI(store, time.Minute), plays)
+	defer client.Close()
+
+	// cache for one week
+	store := persist.NewRedisStore(client)
+
+	cacheDuration := time.Hour * 24 * 7
+
+	r.GET("/health", ginCache.CacheByRequestPath(store, cacheDuration), health)
+	r.GET("/search", ginCache.CacheByRequestURI(store, cacheDuration), search)
+	r.GET("/collection", ginCache.CacheByRequestURI(store, cacheDuration), collection)
+	r.GET("/plays", ginCache.CacheByRequestURI(store, cacheDuration), plays)
+	r.GET("/item/:id", ginCache.CacheByRequestURI(store, cacheDuration), item)
 	r.Run()
 
 	log.Println("Server stopped")
