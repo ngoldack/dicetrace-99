@@ -47,6 +47,6 @@
 		"@auth/core": "^0.9.0",
 		"@auth/sveltekit": "^0.3.5",
 		"@vercel/analytics": "^1.0.1",
-		"svelte-sonner": "^0.0.13"
+		"svelte-sonner": "^0.1.0"
 	}
 }
