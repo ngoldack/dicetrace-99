@@ -5,8 +5,15 @@ import { type Actions, redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const param = url.searchParams.get('q');
-	const query = param !== '' ? param : undefined;
-	const response = await fetch(`${env.PUBLIC_BGG_PROXY_URL}/search?q=${query}`);
+	const query = param && param !== '' ? param : undefined;
+
+	if (!query) {
+		return {
+			query: undefined,
+			results: []
+		};
+	}
+	const response = await fetch(`${env.PUBLIC_BGG_PROXY_URL}/api/v1/search?q=${query}`);
 
 	try {
 		if (response.ok) {

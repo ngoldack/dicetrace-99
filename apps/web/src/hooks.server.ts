@@ -62,7 +62,7 @@ export const handle: Handle = sequence(
 export const handleError = (error: Error) => {
 	return {
 		code: 500,
-		message: error.message ?? error.cause?.message ?? 'Unknown error',
+		message: error.message ?? 'Unknown error',
 		id: crypto.randomUUID()
 	} satisfies App.Error;
 };

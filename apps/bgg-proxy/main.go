@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -12,7 +11,6 @@ import (
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/fzerorubigd/gobgg"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 
 	ginCache "github.com/chenyahui/gin-cache"
@@ -36,25 +34,33 @@ var client = &syncedClient{
 	bgg: gobgg.NewBGGClient(gobgg.SetLimiter(rl), gobgg.SetClient(httpClient)),
 }
 
-func health(c *gin.Context) {
-	client.mu.Lock()
-	defer client.mu.Unlock()
+func health(store *persist.MemoryStore) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		client.mu.Lock()
+		defer client.mu.Unlock()
 
-	start := time.Now()
-	_, err := client.bgg.Hotness(c, 0)
-	if err != nil {
-		log.Fatal(err)
-		problem.Of(http.StatusInternalServerError).Append(
-			problem.Title("Error while pinging bgg"),
-			problem.Custom("error", err.Error())).WriteTo(c.Writer)
-		return
+		start := time.Now()
+		_, err := client.bgg.Hotness(c, 0)
+		if err != nil {
+			log.Fatal(err)
+			problem.Of(http.StatusInternalServerError).Append(
+				problem.Title("Error while pinging bgg"),
+				problem.Custom("error", err.Error())).WriteTo(c.Writer)
+			return
+		}
+		delay := time.Since(start).String()
+
+		keys := make([]string, 0, len(store.Cache.GetItems()))
+		for k := range store.Cache.GetItems() {
+			keys = append(keys, k)
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"cache":  gin.H{"keys": keys, "size": len(keys)},
+			"status": http.StatusOK,
+			"delay":  delay,
+		})
 	}
-	delay := time.Since(start).String()
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"delay":  delay,
-	})
 
 }
 
@@ -80,11 +86,16 @@ func search(c *gin.Context) {
 }
 
 func collection(c *gin.Context) {
+	username := c.Query("username")
+	if username == "" {
+		problem.Of(http.StatusBadRequest).Append(problem.Title("Missing username")).WriteTo(c.Writer)
+		return
+	}
 
 	client.mu.Lock()
 	defer client.mu.Unlock()
 
-	collection, err := client.bgg.GetCollection(c, client.bgg.GetActiveUsername())
+	collection, err := client.bgg.GetCollection(c, username)
 	if err != nil {
 		log.Fatal(err)
 		problem.Of(http.StatusInternalServerError).Append(problem.Title("Error while getting collection")).WriteTo(c.Writer)
@@ -125,34 +136,39 @@ func plays(c *gin.Context) {
 }
 
 func item(c *gin.Context) {
-	idString := c.Param("id")
-	if idString == "" {
-		problem.Of(http.StatusBadRequest).Append(problem.Title("Missing id")).WriteTo(c.Writer)
+	idsQuery := c.Query("ids")
+	if idsQuery == "" {
+		problem.Of(http.StatusBadRequest).Append(problem.Title("Missing id(s)")).WriteTo(c.Writer)
 		return
 	}
 
-	id, err := strconv.Atoi(idString)
-	if err != nil {
-		problem.Of(http.StatusBadRequest).Append(problem.Title("Invalid id")).WriteTo(c.Writer)
-		return
+	idsStrings := strings.Split(idsQuery, ",")
+	ids := make([]int64, 0)
+	for _, idString := range idsStrings {
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			problem.Of(http.StatusBadRequest).Append(problem.Title("Invalid id")).WriteTo(c.Writer)
+			return
+		}
+		ids = append(ids, int64(id))
 	}
 
 	client.mu.Lock()
 	defer client.mu.Unlock()
 
-	item, err := client.bgg.GetThings(c, gobgg.GetThingIDs(int64(id)))
+	items, err := client.bgg.GetThings(c, gobgg.GetThingIDs(ids...))
 	if err != nil {
 		log.Fatal(err)
 		problem.Of(http.StatusInternalServerError).Append(problem.Title("Error while getting item")).WriteTo(c.Writer)
 		return
 	}
 
-	if len(item) == 0 {
+	if len(items) == 0 {
 		problem.Of(http.StatusBadRequest).Append(problem.Title("Item not found")).WriteTo(c.Writer)
 		return
 	}
 
-	c.JSON(http.StatusOK, item[0])
+	c.JSON(http.StatusOK, items)
 }
 
 func main() {
@@ -164,24 +180,19 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	r := gin.Default()
-
-	// setup redis
-	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
-	client := redis.NewClient(opt)
-
-	defer client.Close()
-
 	// cache for one week
-	store := persist.NewRedisStore(client)
-
 	cacheDuration := time.Hour * 24 * 7
+	store := persist.NewMemoryStore(cacheDuration)
 
-	r.GET("/health", ginCache.CacheByRequestPath(store, cacheDuration), health)
-	r.GET("/search", ginCache.CacheByRequestURI(store, cacheDuration), search)
-	r.GET("/collection", ginCache.CacheByRequestURI(store, cacheDuration), collection)
-	r.GET("/plays", ginCache.CacheByRequestURI(store, cacheDuration), plays)
-	r.GET("/item/:id", ginCache.CacheByRequestURI(store, cacheDuration), item)
+	r := gin.Default()
+	r.GET("/health", ginCache.CacheByRequestPath(store, time.Second), health(store))
+
+	v1 := r.Group("/api/v1")
+	v1.GET("/search", ginCache.CacheByRequestURI(store, cacheDuration), search)
+	v1.GET("/collection", ginCache.CacheByRequestURI(store, cacheDuration), collection)
+	v1.GET("/plays", ginCache.CacheByRequestURI(store, cacheDuration), plays)
+	v1.GET("/item", ginCache.CacheByRequestURI(store, cacheDuration), item)
+
 	r.Run()
 
 	log.Println("Server stopped")

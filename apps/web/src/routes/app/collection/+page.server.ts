@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ parent }) => {
 
 	try {
 		const response = await fetch(
-			`${env.PUBLIC_BGG_PROXY_URL}/collection?username=${userdata.bgg_username}`
+			`${env.PUBLIC_BGG_PROXY_URL}/api/v1/collection?username=${userdata.bgg_username}`
 		);
 		const body = await response.json();
 		return {

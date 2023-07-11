@@ -3,8 +3,6 @@
 
 	export let data;
 	let item = data.item;
-
-	console.log(item);
 </script>
 
 <div class="p-4">

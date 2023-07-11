@@ -113,6 +113,9 @@ importers:
       svelte-check:
         specifier: ^3.4.5
         version: 3.4.5(postcss@8.4.25)(svelte@4.0.5)
+      svelte-lazy:
+        specifier: ^1.2.1
+        version: 1.2.1(svelte@4.0.5)
       tailwindcss:
         specifier: ^3.3.2
         version: 3.3.2
@@ -3825,6 +3828,14 @@ packages:
       svelte: ^3.19.0 || ^4.0.0-next.0
     dependencies:
       svelte: 4.0.5
+
+  /svelte-lazy@1.2.1(svelte@4.0.5):
+    resolution: {integrity: sha512-8L+GrU5p0ia/nLDeGDMTC+DtmbXlFcoaTPoSf8jIy1NoKicqSJXz5tjiu6GUsD7ra0RjgIvhQiLcdZYR9VECeA==}
+    peerDependencies:
+      svelte: 3.x
+    dependencies:
+      svelte: 4.0.5
+    dev: true
 
   /svelte-preprocess@5.0.4(postcss@8.4.25)(svelte@4.0.5)(typescript@5.1.6):
     resolution: {integrity: sha512-ABia2QegosxOGsVlsSBJvoWeXy1wUKSfF7SWJdTjLAbx/Y3SrVevvvbFNQqrSJw89+lNSsM58SipmZJ5SRi5iw==}
