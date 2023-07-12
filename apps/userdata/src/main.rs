@@ -1,11 +1,9 @@
 use rocket::{catchers, launch, routes};
+use rs_rocket_catcher::catcher::{bad_request, internal_error, not_found};
 
 mod db;
-mod error_handler;
 mod responses;
 mod user_handler;
-
-use error_handler::{bad_request, internal_error, not_found};
 
 #[launch]
 async fn rocket() -> _ {

@@ -1551,6 +1551,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "rs-rocket-catcher"
+version = "0.1.0"
+dependencies = [
+ "http-api-problem",
+ "rocket",
+]
+
+[[package]]
 name = "rs-rocket-cors"
 version = "0.1.0"
 dependencies = [
@@ -2470,10 +2478,10 @@ dependencies = [
  "dotenv",
  "http-api-problem",
  "log",
- "nanoid",
  "rocket",
  "rs-id-gen",
  "rs-models",
+ "rs-rocket-catcher",
  "rs-rocket-cors",
  "serde",
  "serde_json",

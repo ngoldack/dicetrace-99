@@ -9,6 +9,7 @@
   "dependencies": {
     "rs-id-gen": "workspace:*",
     "rs-models": "workspace:*",
-    "rs-rocket-cors": "workspace:*"
+    "rs-rocket-cors": "workspace:*",
+    "rs-rocket-catcher": "workspace:*"
   }
 }
