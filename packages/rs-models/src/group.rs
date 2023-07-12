@@ -5,6 +5,5 @@ use serde::Serialize;
 pub struct Group {
     pub id: Option<String>,
     pub name: String,
-    pub description: String,
     pub users: Vec<String>,
 }

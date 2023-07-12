@@ -2,6 +2,7 @@ use http_api_problem::*;
 use rocket::{get, post, serde::json::Json};
 use rs_models::user::User;
 use rs_rocket_response::responses::OkResponse;
+use rs_id_gen::gen;
 
 #[get("/<id>")]
 pub async fn get_user(
@@ -35,7 +36,7 @@ pub async fn create_user(
 ) -> Result<Json<OkResponse<User>>, HttpApiProblem> {
     log::debug!("Creating user: {:?}", user);
 
-    user.id = Some(rs_id_gen::gen());
+    user.id = Some(gen());
 
     let result: Result<_, sqlx::Error> = sqlx::query!(
         "INSERT INTO users (id, name, email, bgg_username) VALUES (?, ?, ?, ?)",

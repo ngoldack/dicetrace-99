@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:9.6
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: dicetrace
+    ports:
+      - 5432:5432

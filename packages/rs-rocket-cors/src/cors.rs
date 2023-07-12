@@ -48,6 +48,5 @@ impl Fairing for CORS {
 #[options("/<_..>")]
 #[allow(dead_code)]
 #[allow(clippy::let_unit_value)]
-pub fn all_options() {
-    /* Intentionally left empty */
-}
+#[warn(clippy::let_unit_value)]
+pub fn all_options() {}

@@ -1,0 +1,17 @@
+{
+    "name": "social",
+    "scripts": {
+      "dev": "cargo watch -x run",
+      "build": "cargo build",
+      "build:release": "cargo build --release",
+      "lint": "cargo clippy -W clippy::pedantic"
+    },
+    "dependencies": {
+      "rs-id-gen": "workspace:*",
+      "rs-models": "workspace:*",
+      "rs-rocket-cors": "workspace:*",
+      "rs-rocket-catcher": "workspace:*",
+      "rs-rocket-response": "workspace:*"
+    }
+  }
+  
