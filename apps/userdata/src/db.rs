@@ -1,6 +1,6 @@
-pub async fn connect() -> sqlx::MySqlPool {
+pub async fn connect() -> sqlx::PgPool {
     let database_url = std::env::var("DATABASE_URL").unwrap();
-    sqlx::MySqlPool::connect(database_url.as_str())
+    sqlx::PgPool::connect(database_url.as_str())
         .await
         .expect("Failed to connect to database")
 }

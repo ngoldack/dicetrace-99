@@ -15,7 +15,7 @@ async fn rocket() -> _ {
     println!("cargo:rerun-if-changed=migrations");
 
     rocket::build()
-        .manage::<sqlx::MySqlPool>(pool)
+        .manage::<sqlx::PgPool>(pool)
         .attach(rs_rocket_cors::cors::CORS)
         .register("/", catchers![not_found, internal_error, bad_request])
         .mount(

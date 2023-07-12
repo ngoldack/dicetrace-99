@@ -1,18 +1,18 @@
 use http_api_problem::*;
 use rocket::{get, post, serde::json::Json};
+use rs_id_gen::gen;
 use rs_models::user::User;
 use rs_rocket_response::responses::OkResponse;
-use rs_id_gen::gen;
 
 #[get("/<id>")]
 pub async fn get_user(
-    pool: &rocket::State<sqlx::MySqlPool>,
-    id: i32,
+    pool: &rocket::State<sqlx::PgPool>,
+    id: String,
 ) -> Result<Json<OkResponse<User>>, HttpApiProblem> {
     log::debug!("Getting user with id: {}", id);
 
     let result: Result<User, sqlx::Error> =
-        sqlx::query_as!(User, "SELECT * FROM users WHERE id = ?", id)
+        sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", id)
             .fetch_one(pool.inner())
             .await;
 
@@ -31,7 +31,7 @@ pub async fn get_user(
 
 #[post("/", data = "<user>")]
 pub async fn create_user(
-    pool: &rocket::State<sqlx::MySqlPool>,
+    pool: &rocket::State<sqlx::PgPool>,
     mut user: Json<User>,
 ) -> Result<Json<OkResponse<User>>, HttpApiProblem> {
     log::debug!("Creating user: {:?}", user);
@@ -39,7 +39,7 @@ pub async fn create_user(
     user.id = Some(gen());
 
     let result: Result<_, sqlx::Error> = sqlx::query!(
-        "INSERT INTO users (id, name, email, bgg_username) VALUES (?, ?, ?, ?)",
+        "INSERT INTO users (id, name, email, bgg_username) VALUES ($1, $2, $3, $4)",
         user.id,
         user.name,
         user.email,
@@ -67,7 +67,7 @@ pub async fn create_user(
 
 #[get("/?<email>")]
 pub async fn get_users(
-    pool: &rocket::State<sqlx::MySqlPool>,
+    pool: &rocket::State<sqlx::PgPool>,
     email: Option<String>,
 ) -> Result<Json<OkResponse<Vec<User>>>, HttpApiProblem> {
     match email {
@@ -75,7 +75,7 @@ pub async fn get_users(
             log::debug!("Getting user with email: {}", e);
 
             let result: Result<Vec<User>, sqlx::Error> =
-                sqlx::query_as!(User, "SELECT * FROM users WHERE email = ?", e)
+                sqlx::query_as!(User, "SELECT * FROM users WHERE email = $1", e)
                     .fetch_all(pool.inner())
                     .await;
 

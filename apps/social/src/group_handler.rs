@@ -64,15 +64,23 @@ pub async fn get_group(
     }))
 }
 
-#[get("/")]
+#[get("/?<user_id>")]
 pub async fn get_groups(
     pool: &rocket::State<sqlx::PgPool>,
+    user_id: Option<String>,
 ) -> Result<Json<OkResponse<Vec<Group>>>, HttpApiProblem> {
     log::debug!("Getting all groups");
 
-    let result_group = sqlx::query_as!(GroupModel, "SELECT id, name FROM groups")
-        .fetch_all(pool.inner())
-        .await;
+    let result_group = match user_id {
+        Some(id) => sqlx::query_as!(GroupModel, 
+            "SELECT id, name FROM groups INNER JOIN group_members ON groups.id = group_members.group_id WHERE group_members.user_id = $1", 
+            id)
+            .fetch_all(pool.inner())
+            .await,
+        None => sqlx::query_as!(GroupModel, "SELECT id, name FROM groups")
+            .fetch_all(pool.inner())
+            .await,
+    };
 
     let result_group_users = sqlx::query_as!(
         GroupUserModel,

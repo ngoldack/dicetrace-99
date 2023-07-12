@@ -5,12 +5,11 @@
 	import { AppBar } from '@skeletonlabs/skeleton';
 
 	export let data;
-
-	onMount(async () => {
-		// invalidate the current page so that future requests will refetch
-		await invalidate($page.url.pathname);
-	});
 </script>
+
+<h2 class="h2 text-center mt-2">
+	{data.username}'s collection
+</h2>
 
 <div class="p-4 max-w-full flex flex-col gap-2">
 	{#each data.collection as item}

@@ -19,6 +19,7 @@
 	import CollectionIcon from '~icons/mdi/cube-outline';
 	import HistoryIcon from '~icons/mdi/history';
 	import SearchIcon from '~icons/mdi/magnify';
+	import GroupIcon from '~icons/mdi/account-group-outline';
 
 	import { signOut } from '@auth/sveltekit/client';
 	import { Toaster } from 'svelte-sonner';
@@ -140,6 +141,13 @@
 					<span>Collection</span>
 				</AppRailAnchor>
 
+				<AppRailAnchor href="/app/groups" selected={$page.url.pathname === '/app/groups'}>
+					<svelte:fragment slot="lead">
+						<GroupIcon class="text-xl" />
+					</svelte:fragment>
+					<span>Groups</span>
+				</AppRailAnchor>
+
 				<AppRailAnchor href="/app/history" selected={$page.url.pathname === '/app/history'}>
 					<svelte:fragment slot="lead">
 						<HistoryIcon class="text-xl" />
@@ -163,7 +171,7 @@
 
 <div class="card p-4 w-72 shadow-xl" data-popup="popupAccount">
 	<ul>
-		<li>{data.userdata.name}</li>
+		<li>{data.userdata?.name}</li>
 		<li>
 			<button
 				class="btn variant-outline-primary"
