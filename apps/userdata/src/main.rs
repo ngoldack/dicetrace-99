@@ -2,7 +2,6 @@ use rocket::{catchers, launch, routes};
 use rs_rocket_catcher::catcher::{bad_request, internal_error, not_found};
 
 mod db;
-mod responses;
 mod user_handler;
 
 #[launch]

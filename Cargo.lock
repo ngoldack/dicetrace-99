@@ -1566,6 +1566,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rs-rocket-response"
+version = "0.1.0"
+dependencies = [
+ "http-api-problem",
+ "rocket",
+ "serde",
+]
+
+[[package]]
 name = "rsa"
 version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1834,6 +1843,24 @@ name = "smallvec"
 version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62bb4feee49fdd9f707ef802e22365a35de4b7b299de4763d44bfea899442ff9"
+
+[[package]]
+name = "social"
+version = "0.1.0"
+dependencies = [
+ "dotenv",
+ "http-api-problem",
+ "log",
+ "rocket",
+ "rs-id-gen",
+ "rs-models",
+ "rs-rocket-catcher",
+ "rs-rocket-cors",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tracing-log",
+]
 
 [[package]]
 name = "socket2"
@@ -2483,6 +2510,7 @@ dependencies = [
  "rs-models",
  "rs-rocket-catcher",
  "rs-rocket-cors",
+ "rs-rocket-response",
  "serde",
  "serde_json",
  "sqlx",

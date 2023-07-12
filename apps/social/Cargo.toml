@@ -1,5 +1,5 @@
 [package]
-name = "userdata"
+name = "social"
 version = "0.1.0"
 edition = "2021"
 
@@ -16,6 +16,5 @@ rs-id-gen = { path = "../../packages/rs-id-gen" }
 rs-models = { path = "../../packages/rs-models" }
 rs-rocket-cors = { path = "../../packages/rs-rocket-cors" }
 rs-rocket-catcher = { path = "../../packages/rs-rocket-catcher" }
-rs-rocket-response = { path = "../../packages/rs-rocket-response" }
 tracing-log = "0.1.3"
 log = "0.4.19"

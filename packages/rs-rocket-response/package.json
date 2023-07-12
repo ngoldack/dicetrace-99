@@ -1,0 +1,8 @@
+{
+  "name": "rs-rocket-response",
+  "scripts": {
+    "build": "cargo build",
+    "test": "cargo test",
+    "lint": "cargo clippy -W clippy::pedantic"
+  }
+}

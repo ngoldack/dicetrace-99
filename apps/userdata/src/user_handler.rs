@@ -1,8 +1,7 @@
 use http_api_problem::*;
 use rocket::{get, post, serde::json::Json};
 use rs_models::user::User;
-
-use crate::responses::OkResponse;
+use rs_rocket_response::responses::OkResponse;
 
 #[get("/<id>")]
 pub async fn get_user(

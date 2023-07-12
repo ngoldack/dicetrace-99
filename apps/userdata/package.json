@@ -10,6 +10,7 @@
     "rs-id-gen": "workspace:*",
     "rs-models": "workspace:*",
     "rs-rocket-cors": "workspace:*",
-    "rs-rocket-catcher": "workspace:*"
+    "rs-rocket-catcher": "workspace:*",
+    "rs-rocket-response": "workspace:*"
   }
 }
