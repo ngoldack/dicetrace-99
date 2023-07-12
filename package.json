@@ -3,6 +3,7 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
+    "test:ci": "turbo run test:ci",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
@@ -13,11 +14,16 @@
     "prettier": "^2.8.8",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.15.0",
   "name": "dicetrace",
   "pnpm": {
     "overrides": {
-      "semver@<7.5.2": ">=7.5.2"
+      "semver@<7.5.2": ">=7.5.2",
+      "got@<11.8.5": ">=11.8.5",
+      "trim@<0.0.3": ">=0.0.3"
     }
+  },
+  "packageManager": "pnpm@8.6.7",
+  "engines": {
+    "node": ">=18.14.0"
   }
 }

@@ -1,0 +1,14 @@
+project:
+  name: dicetrace
+  tz: Europe/Berlin
+  adrFolder: ./docs/adr
+  packages:
+    - name: bgg-proxy
+      path: ./apps/bgg-proxy
+      adrFolder: ./apps/bgg-proxy/docs/adr
+    - name: userdata
+      path: ./apps/userdata
+      adrFolder: ./apps/userdata/docs/adr
+    - name: web
+      path: ./apps/web
+      adrFolder: ./apps/web/docs/adr

@@ -1,0 +1,40 @@
+FROM rust:1.70.0-slim-bullseye AS chef 
+# We only pay the installation cost once, 
+# it will be cached from the second build onwards
+RUN cargo install cargo-chef 
+WORKDIR /app
+
+FROM chef AS planner
+COPY . .
+RUN cargo chef prepare --recipe-path recipe.json
+
+FROM chef AS builder
+WORKDIR /app
+
+COPY --from=planner /app/recipe.json recipe.json
+# Build dependencies - this is the caching Docker layer!
+RUN cargo chef cook --release --recipe-path recipe.json
+
+# database url is required during build for sqlx query macros
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+COPY ./ ./
+
+RUN cargo build --release --package userdata
+
+FROM debian:bullseye-slim AS runner
+
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 3. Copy the binary from the builder image to the new image
+COPY --from=builder /app/target/release/userdata ./
+
+EXPOSE 8000
+
+# Run the binary
+CMD ["./userdata"]

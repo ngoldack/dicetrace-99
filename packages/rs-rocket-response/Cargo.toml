@@ -1,0 +1,11 @@
+[package]
+name = "rs-rocket-response"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = "1"
+rocket = "0.5.0-rc.3"
+http-api-problem = { version = "0.57.0", features = [ "rocket-okapi" ]}

@@ -8,7 +8,11 @@ const config = {
 		inspector: true
 	},
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		version: {
+			name: process?.env?.VERCEL_GIT_COMMIT_SHA ?? Date.now().toString(),
+			pollInterval: 60000 // 1 min
+		}
 	}
 };
 export default config;

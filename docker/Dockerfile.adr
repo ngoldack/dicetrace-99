@@ -1,0 +1,12 @@
+FROM thomvaill/log4brains AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN mkdir -p build/log4brains
+RUN log4brains build -o build/log4brains
+
+FROM nginx:alpine AS runner
+EXPOSE 80
+COPY --from=builder /app/build/log4brains /usr/share/nginx/html
